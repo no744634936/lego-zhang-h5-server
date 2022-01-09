@@ -78,3 +78,13 @@ pre-commit文件里写上 npm run lint-fix
 npx husky add .husky/pre-push     //生成pre-push 文件 push之前做test
 
 pre-push文件里写上 npm run test:local
+
+
+
+------------------------------------------------
+commit 的规范
+
+这里我暂时没有添加
+
+
+------------------------------------------------

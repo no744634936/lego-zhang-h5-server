@@ -1,90 +1,75 @@
-项目建立
+链接数据库的步骤跟 lego-zhang-backend一摸一样
+lego-zhang-backend 跟 lego-zhang-h5-server 使用相同的数据库
 
-1, koa2 lego_h5_server
 
-2, 建立src文件夹，将public，routes，views,app.js文件放入
+-------------------------------------------------------
+使用mysql2来连接mysql数据库
+    npm install mysql2 --save
+    
+    1，首先mysql数据库里面建立数据库imooc_lego_course
 
-3，bin/www 里将端口3000改为3001，
+    2，写连接mysql数据库的配置文件
+     (账号，密码等,根据运行环境不同，账号密码也会不同)， 
+     (src/config/index.js)
 
-   var app = require('../app');改为
-
-   var app = require('../src/app');
-
-4, git init
-
-开发前的准备工作
-1，npm install jest --save-dev
-
-2，安装supertest npm install supertest --save-dev
-
-3，创建_test_/apis 文件夹里的所有文件
-
-4, npm install cross-env --save
-
-5,package.json 里面写上这下面这两句
-
-"test:local": "cross-env NODE_ENV=test_local jest --runInBand --passWithNoTests --forceExit --colors",
-
-"prd": "cross-env NODE_ENV=production pm2 start bin/www",
-
-6, cmd控制台输入命令，npm run test:local
-
---------------------------------------------------------------------------
-
-写代码的规范
-1，
-npm install eslint --save-dev 
-
-npm install prettier --save-dev
-
-2，
-npm install eslint-plugin-import --save-dev 
-
-npm install eslint-plugin-prettier --save-dev
-
-3，
-npm install eslint-config-airbnb-base --save-dev 
-
-npm install eslint-config-prettier --save-dev
-
-4, 三个文件
-
-.eslintrc.js
-.eslintignore
-
-5,
-package.json里写上 
-
-"lint": "eslint \"src/**/*.{js,ts}\"",         //检查src文件夹里的代码布局，语法。 
-
-"lint-fix": "eslint --fix \"src/**/*.{js,ts}\""  //修改src文件夹里的代码布局。
-
-npm run lint //检查代码布局，语法。 
-
-npm run lint-fix //修改代码布局。
-
----------------------------------------------------------------------
-git commit 之前自动做格式检查
-
-1，
-npm install husky --save-dev 
-
-npx husky install //生成一个.husky文件
-
-npx husky add .husky/pre-commit    //生成pre-commit文件 commit之前做修改格式
-
-pre-commit文件里写上 npm run lint-fix
-
-npx husky add .husky/pre-push     //生成pre-push 文件 push之前做test
-
-pre-push文件里写上 npm run test:local
+    3，根据数据库配置文件，连接mysql数据库        ('src/db/mysql2.js)
+    
+    mysql2是用来测试链接数据库的，在这个项目里没什么用，
+    连接跟操作mysql数据库用sequelise就可以了
 
 
 
-------------------------------------------------
-commit 的规范
+    使用sequelize可以非常简单地连接数据库，并对数据表进行操作
+    npm install sequelize --save
 
-这里我暂时没有添加
+    4，让sequelize连接mysql数据库                  (src/db/seq.js)
+    5，建立数据表模型                              (src/dbTables/workModel.js )
+
+    6，controller就可以通过使用sequelize数据表模型对数据表进行增，删，改，查
+
+    mysql数据表的同步
+    这个项目不需要同步mysql数据表，
+    同步数据表由lego-zhang-backend 项目来做
 
 
-------------------------------------------------
+----------------------------------------------------------------------------
+    使用mongoose来连接mongodb数据库
+
+    1，首先mongodb里面建立数据库 imooc_lego_course
+        
+    2，写连接mongodb数据库的配置文件，   (src/config/index.js)
+
+    3，使用mongoose连接mongodb数据库 src/db/mongoose.js
+       npm install mongoose --save
+    
+    使用mongoose可以非常简单地进行数据表操作，
+
+    4，建立数据表模型                      (src/dbTables/workContentModel.js )
+    controller就可以通过使用mongoose数据表模型对数据表进行增，删，改，查
+
+----------------------------------------------------------------------------
+
+    对redis缓存数据库的操作，
+
+    1,下载 redis到电脑上，打开 redis-server.exe 文件。要一直运行redis
+
+    2,写连接redis数据库的配置文件，      (src/config/index.js)
+    3,根据配置文件，连接redis数据库    (src/db/redis.js)
+      npm install redis --save
+
+    4,写两个操作redis 数据库的set get方法 (src/cache/index.js)
+
+      controller就可以通过使用set get方法，获取，修改redis里面的缓存
+
+    5，做一个统一的路由来测试所有数据库是否连接成功 src/routes/inde.js
+       查看localhost:3001/api/database_conn_check 
+--------------------------------------------------------------------------------
+
+值得注意的是，
+mongodb跟redis都更新了版本有些地方已经不一样了
+
+关于使用mongoose来连接mongodb的写法跟lego-zhang-backend有些不同
+
+redis已经更新到了v4,可以直接使用async 跟await了，不需要写cache/index.js 文件了
+
+但是为了方便，我还是用v3版本继续使用cache/index.js 文件

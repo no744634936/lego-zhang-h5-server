@@ -23,7 +23,11 @@
     "koa-router": "^7.4.0",
     "koa-static": "^5.0.0",
     "koa-views": "^6.2.0",
-    "pug": "^3.0.2"
+    "mongoose": "^6.1.5",
+    "mysql2": "^2.3.3",
+    "pug": "^3.0.2",
+    "redis": "^3.1.2",
+    "sequelize": "^6.12.5"
   },
   "devDependencies": {
     "eslint": "^8.6.0",

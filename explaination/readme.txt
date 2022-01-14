@@ -66,7 +66,7 @@ jobs:
                     git checkout dev;           # 切换到dev分支
                     git pull origin dev;        #重新下载最新代码
                     git remote remove origin;   # 删除 remote origin
-                    docker-compose build h5-server-image;
+                    docker-compose build h5-server;  # h5-server与docker-compose 文件里的名字相同
                     docker-compose up -d;
                   "
             - name: delete ssh key              # 删除上面给ubuntu-latest 设置的私钥.
@@ -80,8 +80,6 @@ git checkout dev    // 切换到dev分支
 git merge  分支名   //将本节分支merge到dev上
 
 本地电脑里在dev 分支上
-git add .
-git commit -m "good"
 git push
 
 dev 分支被push到github的之前
@@ -122,8 +120,7 @@ git checkout dev
 git merge  A           //将A分支merge到dev上
 
 本地电脑里在dev 分支上
-git add .
-git commit -m "good"
+
 git push
 
 github action 再次 启动

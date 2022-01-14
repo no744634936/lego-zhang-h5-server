@@ -34,7 +34,7 @@ jobs:
                     git checkout dev;
                     git pull origin dev;
                     git remote remove origin;
-                    docker-compose build h5-server-image;
+                    docker-compose build h5-server;
                     docker-compose up -d;
                   "
             - name: delete ssh key # 删除 ssh key

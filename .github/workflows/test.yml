@@ -18,7 +18,7 @@ jobs:
     deploy-dev: # 任务名
         runs-on: ubuntu-latest # 这是github提供的默认的操作系统 deploy-dev这个任务就在这个操作系统上运行
         steps:
-            - uses: actions/checkout@v2    #actions/checkout@v2第三方插件，就相当于 checkout ,将3_dev分支的最新代码拉到ubuntu-latest这个系统里时要用到
+            - uses: actions/checkout@v2    #actions/checkout@v2第三方插件，就相当于 checkout ,将dev分支的最新代码拉到ubuntu-latest这个系统里时要用到
             - name: set ssh key # 步骤二临时设置 ssh key，这个name写不写都可以，给github上的ubuntu-latest系统设置我本地电脑的私钥，后面ubuntu-latest就可以拿着我的私钥，去匹配aws上的共钥，登录测试机。 github上的项目仓库-->setting-->secrets-->new repository secrets
               run: |
                   mkdir -p ~/.ssh/
@@ -28,13 +28,13 @@ jobs:
             - name: deploy # 步骤三部署 
               run: | #执行多行命令要要使用竖线
                   ssh zhang@54.199.244.92 "
-                    cd /home/zhang/imooc-lego/lego-zhang-backend;
+                    cd /home/zhang/imooc-lego/lego-zhang-h5-server;
                     docker-compose down;
-                    git remote add origin https://github.com/no744634936/lego-zhang-backend.git;
-                    git checkout 3_dev;
-                    git pull origin 3_dev;
+                    git remote add origin https://github.com/no744634936/lego-zhang-h5-server.git;
+                    git checkout dev;
+                    git pull origin dev;
                     git remote remove origin;
-                    docker-compose build editor-server;
+                    docker-compose build h5-server-image;
                     docker-compose up -d;
                   "
             - name: delete ssh key # 删除 ssh key

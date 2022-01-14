@@ -166,13 +166,5 @@ docker images
 docker exec -it <container-id> /bin/sh
 
 
-9,cd到 lego_h5_server项目下 执行 docker-compose down 
-  只会停止 h5-server 这个container
-
-  cd到 lego_backend项目下 执行 docker-compose down
-  会停止 editor-server ，redis，mysql，mongo这些container
-
-
-
 
 

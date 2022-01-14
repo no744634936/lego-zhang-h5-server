@@ -13,6 +13,7 @@
     "lint-fix": "eslint --fix \"src/**/*.{js,ts}\""
   },
   "dependencies": {
+    "axios": "^0.24.0",
     "cross-env": "^7.0.3",
     "debug": "^4.1.1",
     "koa": "^2.7.0",

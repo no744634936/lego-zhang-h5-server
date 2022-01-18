@@ -8,7 +8,8 @@ const bodyparser = require('koa-bodyparser')
 const logger = require('koa-logger')
 
 const index = require('./routes/index')
-const users = require('./routes/users')
+const works = require('./routes/works')
+const errorRouter = require('./routes/error')
 
 // error handler
 onerror(app)
@@ -39,7 +40,10 @@ app.use(async (ctx, next) => {
 
 // routes
 app.use(index.routes(), index.allowedMethods())
-app.use(users.routes(), users.allowedMethods())
+// routes
+app.use(index.routes(), index.allowedMethods())
+app.use(works.routes(), works.allowedMethods())
+app.use(errorRouter.routes(), errorRouter.allowedMethods()) // 404 路由一定要最后注册
 
 // error-handling
 app.on('error', (err, ctx) => {

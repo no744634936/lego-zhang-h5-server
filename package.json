@@ -13,6 +13,7 @@
     "lint-fix": "eslint --fix \"src/**/*.{js,ts}\""
   },
   "dependencies": {
+    "@vue/server-renderer": "^3.2.27",
     "axios": "^0.24.0",
     "cross-env": "^7.0.3",
     "debug": "^4.1.1",
@@ -25,12 +26,14 @@
     "koa-router": "^7.4.0",
     "koa-static": "^5.0.0",
     "koa-views": "^6.2.0",
+    "lego-components": "^0.1.7",
     "lodash": "^4.17.21",
     "mongoose": "^6.1.5",
     "mysql2": "^2.3.3",
     "pug": "^3.0.2",
     "redis": "^3.1.2",
-    "sequelize": "^6.12.5"
+    "sequelize": "^6.12.5",
+    "vue": "^3.2.27"
   },
   "devDependencies": {
     "eslint": "^8.6.0",

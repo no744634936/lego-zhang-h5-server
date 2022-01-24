@@ -7,7 +7,8 @@
 const AWS = require('aws-sdk')
 const path = require('path')
 const fs = require('fs')
-const { awsS3Conf } = require('../config/index') // prd跟prd_dev用的是同一个s3
+// 现在prd跟prd_dev用的是同一个s3,正式开发的时候两个环境下的s3应该分开
+const { awsS3Conf } = require('../config/index')
 
 AWS.config.update({
     accessKeyId: awsS3Conf.accessKeyId,

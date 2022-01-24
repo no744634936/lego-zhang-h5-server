@@ -10,6 +10,7 @@ const logger = require('koa-logger')
 const index = require('./routes/index')
 const works = require('./routes/works')
 const errorRouter = require('./routes/error')
+const renderWithAssets = require('./middlewares/renderWithStaticAssets')
 
 // error handler
 onerror(app)
@@ -38,6 +39,7 @@ app.use(async (ctx, next) => {
     console.log(`${ctx.method} ${ctx.url} - ${ms}ms`)
 })
 
+app.use(renderWithAssets)
 // routes
 app.use(index.routes(), index.allowedMethods())
 // routes

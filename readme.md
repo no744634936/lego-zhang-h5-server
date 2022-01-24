@@ -1,98 +1,58 @@
-H5前端功能
-H5除了 html代码之外，还有很多功能需要js css等来实现。
-而且还要引入lego-components的css 
+public ，cdn下的静态文件的获取属于硬盘io，很慢，
 
-默认情况下，所有的js css等都可以写在src/public文件夹里，
+所以获取 public 下或CDN下的静态文件时，
 
-但这是一个非常原始的方式——没有打包，直接输出。
+重写ctx.render 为 renderWithAssets
 
-所以，我们需要借助webpack打包jscss等，还要发布到CDN上 —— 跟前端editor项目一样。
+然后再app.js 文件中注册该中间件
 
-要开发H5前端功能，我们需要分两步
+app.js初始化时就执行，
 
-• webpack打包静态文件，并发布到CDN 
-(本地，测试环境不需要，线上环境才需要CDN上的静态文件)
+ASSETS_CSS_FILES 跟 ASSETS_JS_FILES被放入服务器内存之中
 
-• 开发各个前端功能  (渠道号检查、事件、统计)
+可以从内存中取出来ASSETS_CSS_FILES 跟 ASSETS_JS_FILES 
 
+在模板引擎里直接使用
 
-----------------------------------------------
-webpack打包静态文件设计思路
+而不是输入一次王子，求一次就去cdn里拿一次css，js文件的路径
 
-js，css的源代码，包括lego-components样式的引入，写在src/assets。
+在给模板引擎渲染
 
-经过webpack打包，输出到src/public。 T
-
-webpack 打包配置在 build-assets。
-
-src/public是koa2默认的静态文件服务，所以输出到这里，就可以有静态服务。
-
-src/public需要加入到.gitignore ,它就像dist ,无需存储到git。
-
-流程:
-• 安装webpack相关插件
-
-• build-assets/下的webpack配置文件
-
-• src/assets/下的静态文件
-
-• package.json 中增加 build-assets- 相关的scripts
-
-• .gitignore 屏蔽掉 src/public
-
--------------------------------------------------------------
-webpack的具体用法可以看github上的webpack_tutorial项目
-
------------------------------------------------------------
-打包静态文件，开发流程:
-
-1, 建立 src/assets 文件夹里的两个文件
-
-2, 建立 build-assets 文件夹里的文件，下面为查看顺序
-
-    constants.js
-
-    webpack.common.js
-
-    webpack.dev.js
-
-    webpack.prd.js
+这样可以可以提高服务器速度
 
 
-3, package.json文件里写上三个命令
+1，创建renderWithStaticAssets.js  中间件重写ctx.render
 
-"build-assets-dev": "cross-env NODE_ENV=dev webpack --config build-assets/webpack.dev.js",
+2，app.js 里注册 使用renderWithStaticAssets 中间件
 
-"build-assets-prd-dev": "cross-env NODE_ENV=prd_dev webpack --config build-assets/webpack.prd.js",
+3, routes/work.js 里renderPage 方法
 
-"build-assets-prd": "cross-env NODE_ENV=production webpack --config build-assets/webpack.prd.js",
+   使用 ctx.renderWithAssets 代替 ctx.render
 
-4,测试
-npm run build-assets-dev
-
-npm run build-assets-prd
-
-查看src/public文件夹里文件的变化
+4，views/layout.pug 模板可以直接使用ASSETS_CSS_FILES 跟 ASSETS_JS_FILES
 
 
-------------------------------------
-静态文件上传AWS 的s3的流程
+5，修改package.js 文件里的命令，自动打包，上传静态文件
 
-1，在lego-zhang-backend项目的时候已经在s3控制台里建立了lego-test-bucket
+    "dev": "npm run build-assets-dev && cross-env NODE_ENV=dev ./node_modules/.bin/nodemon bin/www",
 
-2，建立 build-assets/assets-upload-s3.js  文件
+    "prd-dev": "npm run build-assets-prd-dev && npm run upload-assets-prd-dev && cross-env NODE_ENV=prd_dev pm2 start bin/pm2-prd-dev.config.js",
 
-3，建立 awsS3.js 文件 (这个文件里的上传文件的方法需要用stream重写一遍才行，现在先这样)
-
-4,package.json里添加两条命令
-
-    dev环境下，图片，css，js 等静态资源都是存放在本地的public上的
-
-    只有prd_dev跟prd 环境下才会将静态资源上传到s3上面去
+    "prd": "npm run build-assets-prd && npm run upload-assets-prd &&cross-env NODE_ENV=production pm2 start bin/www",
 
 
-    "upload-assets-prd-dev": "cross-env NODE_ENV=prd_dev node build-assets/assets-upload-s3.js",
+6， npm run dev
 
-    "upload-assets-prd": "cross-env NODE_ENV=production node build-assets/assets-upload-s3.js",
+   网页输入 http://localhost:3001/p/143-9b48
 
-5, 测试 npm run upload-assets-prd-dev
+   可以看到这个网页使用的是，public 文件夹里的 main.js 跟style.css
+
+
+7，远程测试机使用以下步骤测试
+   本地没有办法测试
+
+   npm run prd_dev
+
+   网页输入 http://测试机-IP/p/143-xxx
+
+   可以看到这个网页使用的是，cdn (aws s3)上的 main.xxxx.js 跟style.xxx.css 文件

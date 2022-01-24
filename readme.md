@@ -1,47 +1,98 @@
-1，npm install vue@next
+H5前端功能
+H5除了 html代码之外，还有很多功能需要js css等来实现。
+而且还要引入lego-components的css 
 
-2，npm i @vue/server-renderer
+默认情况下，所有的js css等都可以写在src/public文件夹里，
 
-3，使用vue3的服务器端渲染（SSR）
+但这是一个非常原始的方式——没有打包，直接输出。
 
-作为练习，查看explaination/vue3_SSR_practice文件夹里的文件
+所以，我们需要借助webpack打包jscss等，还要发布到CDN上 —— 跟前端editor项目一样。
 
-4，npm i lego-components
+要开发H5前端功能，我们需要分两步
 
+• webpack打包静态文件，并发布到CDN 
+(本地，测试环境不需要，线上环境才需要CDN上的静态文件)
 
-5，查看routes/woks.js 文件中的两个路由
-
-这节的主要内容是将已发布的作品取出来，
-
-做成一个html字符串
-
-然后将这个html字符串交给 views/works.js 文件，
-
-渲染成完整的网页
+• 开发各个前端功能  (渠道号检查、事件、统计)
 
 
-----------------------------------------------------
-测试流程
+----------------------------------------------
+webpack打包静态文件设计思路
 
-首先使用editor_backend_server里的 api
+js，css的源代码，包括lego-components样式的引入，写在src/assets。
 
-localhost:3000/api/works/create
+经过webpack打包，输出到src/public。 T
 
-然后使用
+webpack 打包配置在 build-assets。
 
-explaination/published_work_example.json
+src/public是koa2默认的静态文件服务，所以输出到这里，就可以有静态服务。
 
-文件里的数据创建一个作品
+src/public需要加入到.gitignore ,它就像dist ,无需存储到git。
 
-然后使用api
+流程:
+• 安装webpack相关插件
 
-localhost:3000/api/works/publish/:id
+• build-assets/下的webpack配置文件
 
-发布该作品得到一个链接:
+• src/assets/下的静态文件
 
-http://localhost:3001/p/143-9b48
+• package.json 中增加 build-assets- 相关的scripts
 
-浏览器输入该链接就可以查看结果了
+• .gitignore 屏蔽掉 src/public
+
+-------------------------------------------------------------
+webpack的具体用法可以看github上的webpack_tutorial项目
+
+-----------------------------------------------------------
+打包静态文件，开发流程:
+
+1, 建立 src/assets 文件夹里的两个文件
+
+2, 建立 build-assets 文件夹里的文件，下面为查看顺序
+
+    constants.js
+
+    webpack.common.js
+
+    webpack.dev.js
+
+    webpack.prd.js
 
 
+3, package.json文件里写上三个命令
 
+"build-assets-dev": "cross-env NODE_ENV=dev webpack --config build-assets/webpack.dev.js",
+
+"build-assets-prd-dev": "cross-env NODE_ENV=prd_dev webpack --config build-assets/webpack.prd.js",
+
+"build-assets-prd": "cross-env NODE_ENV=production webpack --config build-assets/webpack.prd.js",
+
+4,测试
+npm run build-assets-dev
+
+npm run build-assets-prd
+
+查看src/public文件夹里文件的变化
+
+
+------------------------------------
+静态文件上传AWS 的s3的流程
+
+1，在lego-zhang-backend项目的时候已经在s3控制台里建立了lego-test-bucket
+
+2，建立 build-assets/assets-upload-s3.js  文件
+
+3，建立 awsS3.js 文件 (这个文件里的上传文件的方法需要用stream重写一遍才行，现在先这样)
+
+4,package.json里添加两条命令
+
+    dev环境下，图片，css，js 等静态资源都是存放在本地的public上的
+
+    只有prd_dev跟prd 环境下才会将静态资源上传到s3上面去
+
+
+    "upload-assets-prd-dev": "cross-env NODE_ENV=prd_dev node build-assets/assets-upload-s3.js",
+
+    "upload-assets-prd": "cross-env NODE_ENV=production node build-assets/assets-upload-s3.js",
+
+5, 测试 npm run upload-assets-prd-dev

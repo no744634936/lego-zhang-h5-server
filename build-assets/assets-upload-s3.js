@@ -15,7 +15,7 @@ const uploadPath = 'h5-assets'
 async function main() {
     // 获取 src/public 下的所有文件
     const publicFiles = fse.readdirSync(publicPath)
-    const files = publicFiles.filter(f => f !== 'favicon.jpg') // 不上传 favicon.jpg
+    const files = publicFiles.filter(f => f !== 'favicon.ico') // 不上传 favicon.ico
 
     // 挨个上传
     const res = await Promise.all(

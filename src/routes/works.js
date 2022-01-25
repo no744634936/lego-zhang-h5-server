@@ -25,6 +25,21 @@ async function renderPage(ctx, work, pageType) {
     const bodyStyle = propsToStyle(props)
     const componentsHtml = await getLegoComponentsHtml(components)
 
+    // 获取 组件的事件的数据
+    const eventInfoList = []
+    components.forEach(component => {
+        // component 中事件的数据格式： { props: { actionType: "to", url: 'https://www.baidu.com?x=10' } }
+        const { id, props: componentProps = {} } = component
+        const { actionType, url } = componentProps
+        if (actionType) {
+            eventInfoList.push({
+                id,
+                actionType,
+                url,
+            })
+        }
+    })
+
     // 渲染页面
     await ctx.renderWithAssets('work', {
         title,
@@ -32,6 +47,7 @@ async function renderPage(ctx, work, pageType) {
         bodyStyle,
         content: componentsHtml,
         pageType,
+        eventInfoList: JSON.stringify(eventInfoList), // 事件
     })
 }
 

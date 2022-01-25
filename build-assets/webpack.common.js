@@ -57,10 +57,10 @@ module.exports = {
 
         new CopyPlugin({
             patterns: [
-                // 拷贝 favicon.jpg 到src/public 文件夹里去
+                // 拷贝 favicon.ico 到src/public 文件夹里去
                 {
-                    from: path.join(srcPath, 'favicon.jpg'),
-                    to: path.join(distPath, 'favicon.jpg'),
+                    from: path.join(srcPath, 'favicon.ico'),
+                    to: path.join(distPath, 'favicon.ico'),
                 },
             ],
         }),

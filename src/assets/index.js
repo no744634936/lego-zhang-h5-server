@@ -6,4 +6,11 @@
 // 业务组件库样式
 import 'lego-components/dist/lego-components.css'
 
-console.log('hello imooc-lego')
+// // 检查 channel 参数
+import './js/checkChannel/checkChannel'
+
+// 数据统计
+import './js/statistic/statPV'
+
+// 绑定事件
+import './js/bindEvent/index'

@@ -1,58 +1,70 @@
-public ，cdn下的静态文件的获取属于硬盘io，很慢，
+---------------------------------------
+渠道检查
 
-所以获取 public 下或CDN下的静态文件时，
+0 layout.pug 设置一下pageType变量
 
-重写ctx.render 为 renderWithAssets
+1 assets/js/checkChanel/checkChannel.js 文件
 
-然后再app.js 文件中注册该中间件
+2 assets/js/utils.js 文件
 
-app.js初始化时就执行，
+3 assets/index.js 文件引入checkChannel.js
 
-ASSETS_CSS_FILES 跟 ASSETS_JS_FILES被放入服务器内存之中
+4，npm run dev
 
-可以从内存中取出来ASSETS_CSS_FILES 跟 ASSETS_JS_FILES 
+5,浏览器输入
+http://localhost:3001/p/143-9b48
 
-在模板引擎里直接使用
+http://localhost:3001/p/143-9b48?channel=facebook
 
-而不是输入一次王子，求一次就去cdn里拿一次css，js文件的路径
-
-在给模板引擎渲染
-
-这样可以可以提高服务器速度
+对比效果
 
 
-1，创建renderWithStaticAssets.js  中间件重写ctx.render
+--------------------------------------------------
+统计服务相关功能
 
-2，app.js 里注册 使用renderWithStaticAssets 中间件
+1 assets/js/statistic/statPV.js 文件
 
-3, routes/work.js 里renderPage 方法
+2 assets/js/statistic/sendEvent.js 文件
 
-   使用 ctx.renderWithAssets 代替 ctx.render
+3 assets/js/statistic/conf.js 文件
 
-4，views/layout.pug 模板可以直接使用ASSETS_CSS_FILES 跟 ASSETS_JS_FILES
+4 assets/index.js 文件引入statPV.js
 
-
-5，修改package.js 文件里的命令，自动打包，上传静态文件
-
-    "dev": "npm run build-assets-dev && cross-env NODE_ENV=dev ./node_modules/.bin/nodemon bin/www",
-
-    "prd-dev": "npm run build-assets-prd-dev && npm run upload-assets-prd-dev && cross-env NODE_ENV=prd_dev pm2 start bin/pm2-prd-dev.config.js",
-
-    "prd": "npm run build-assets-prd && npm run upload-assets-prd &&cross-env NODE_ENV=production pm2 start bin/www",
+5，由于还没有做，统计服务器的相关功能，先把代码写在这里
 
 
-6， npm run dev
+-----------------------------------------------
+事件的绑定(点击跳转事件)
 
-   网页输入 http://localhost:3001/p/143-9b48
+1 routes/work.js 里获取事件的数据
 
-   可以看到这个网页使用的是，public 文件夹里的 main.js 跟style.css
+2,layout.pug 设置一下eventInfoList变量,挂到window上去
 
+3,建立 assets/js/bindEvent/index.js 文件
 
-7，远程测试机使用以下步骤测试
-   本地没有办法测试
+4,建立 assets/js/bindEvent/jumpTo.js 文件
 
-   npm run prd_dev
+5,assets/index.js 文件引入 bindEvent/index.js 文件
 
-   网页输入 http://测试机-IP/p/143-xxx
+6, 使用 zhang_lego_backend  的api
 
-   可以看到这个网页使用的是，cdn (aws s3)上的 main.xxxx.js 跟style.xxx.css 文件
+localhost:3000/api/works/create
+
+然后使用
+
+explaination/published_work_example.json
+
+文件里的数据创建一个作品
+
+然后使用api
+
+localhost:3000/api/works/publish/:id
+
+发布该作品得到一个链接:http://localhost:3001/p/150-bb46
+
+浏览器输入
+http://localhost:3001/p/150-bb46?channel=facebook
+
+点击书本图片即可看到跳转
+跳转的url上还带有channel=facebook 参数
+

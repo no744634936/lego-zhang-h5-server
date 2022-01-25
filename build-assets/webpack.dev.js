@@ -19,6 +19,7 @@ module.exports = merge(webpackCommonConf, {
         new MiniCssExtractPlugin({
             filename: 'style.css',
         }),
+        // 使用webpack 配置环境变量
         new webpack.DefinePlugin({
             ENV: JSON.stringify(process.env.NODE_ENV),
         }),
